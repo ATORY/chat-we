@@ -1,0 +1,10 @@
+{
+    "env": {
+        "node": true
+    },
+    "extends": ["plugin:prettier/recommended"],
+    "plugins": ["prettier"],
+    "rules": {
+      "prettier/prettier": ["error", {"singleQuote": true, "endOfLine":"auto"}]
+    }
+}

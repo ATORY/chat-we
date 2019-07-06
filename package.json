@@ -2,16 +2,23 @@
   "name": "chat-we",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-scripts": "3.0.1"
-  },
+  "main": "electron/main.js",
   "scripts": {
+    "server:dev": "NODE_ENV=development nodemon server/app.js",
+    "electron:dev": "ELECTRON_START_URL=http://localhost:9876 electron . --debug",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "electron-log": "^3.0.6",
+    "koa": "^2.7.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-scripts": "3.0.1",
+    "socket.io": "^2.2.0",
+    "update-electron-app": "^1.4.2"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -27,5 +34,14 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "devtron": "^1.4.0",
+    "electron": "^5.0.6",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "nodemon": "^1.19.1",
+    "prettier": "^1.18.2"
   }
 }
