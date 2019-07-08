@@ -20,9 +20,14 @@ function initialize() {
   function createWindow() {
     const windowOptions = {
       width: 1080,
-      minWidth: 680,
       height: 840,
-      title: app.getName()
+      minWidth: 680,
+      minHeight: 500,
+      title: app.getName(),
+      webPreferences: {
+        nodeIntegration: true,
+        webSecurity: false
+      }
     };
 
     if (process.platform === 'linux') {
@@ -30,13 +35,13 @@ function initialize() {
     }
 
     mainWindow = new BrowserWindow(windowOptions);
-    const electronUrl =
-      process.env.ELECTRON_START_URL ||
-      url.format({
-        pathname: path.join(__dirname, '../build/index.html'),
-        protocol: 'file:',
-        slashes: true
-      });
+    const electronUrl = debug
+      ? process.env.ELECTRON_START_URL
+      : url.format({
+          pathname: path.join(__dirname, '../build/index.html'),
+          protocol: 'file:',
+          slashes: true
+        });
 
     mainWindow.loadURL(electronUrl);
 

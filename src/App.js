@@ -1,51 +1,84 @@
-import React from 'react';
-import io from 'socket.io-client';
+import React, { useReducer } from 'react';
+import styled, { createGlobalStyle } from 'styled-components'
 
+import { ChatContext, reducer, initialState } from './ChatState';
 import logo from './logo.svg';
-import './App.css';
+import defaultAvator from './account.svg'
 
-const socket = io('http://localhost:9877?token=abc');
-socket.on('connect', () => {
-  if (socket.connected) {
-    socket.on('hello', (msg) => {
-      console.log({ msg })
-    })
-  } else {
-
+const GlobalStyle = createGlobalStyle`
+  body {
+    margin: 0;
+    padding: 0;
+    color: ${props => (props.whiteColor ? 'white' : 'black')};
   }
-  console.log({ connected: socket.connected }); // true
-});
+  .electron-drag {
+    -webkit-app-region: 'drag'
+  }
+`
 
-socket.on('disconnected', (msg) => {
-  console.log({ msg })
-})
+const AppContainer = styled.div`
+  display: flex;
+  align-items: stretch;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: #eeeeee;
+`
 
-socket.on('reconnect', (attemptNumber) => {
-  console.log({ attemptNumber })
-});
+const Nav = styled.nav`
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* justify-content: center; */
+  overflow-y: scroll;
+  background-color: #000;
+  padding-top: 30px;
+  padding-bottom: 20px;
+  & .avator {
+    background: gray;
+    display: inline-block;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #fff;
+  }
+  & .App-logo {
+    width: 60px;
+    /* align-self: flex-end; */
+    justify-self: flex-end;
+  }
+`
 
-socket.on('reconnect_error', (error) => {
-  console.log('reconnecting..')
-});
+const ASide = styled.div`
+  width: 230px;
+  border: 1px solid #d3d3d3;
+  border-top: none;
+  border-bottom: none;
+  overflow-y: scroll;
+`
+
+const Main = styled.main`
+  flex-grow: 1;
+  overflow-y: scroll;
+`
 
 function App() {
+  const [state, dispatch] = useReducer(reducer, initialState);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ChatContext.Provider value={{ dispatch, ...state }}>
+      <GlobalStyle />
+      <AppContainer>
+        <Nav>
+          <img src={defaultAvator} className="avator" alt="avator" />
+          <img src={logo} className="App-logo" alt="logo" />
+        </Nav>
+        <ASide></ASide>
+        <Main></Main>
+      </AppContainer>
+    </ChatContext.Provider>
   );
 }
 
