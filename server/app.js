@@ -37,6 +37,8 @@ const rooms = {
 
 io.on('connection', function(socket) {
   console.log('connected', socket.id, socket.request, socket.rooms);
+  // socket request token check
+  // if notValid socket.emit needLogin
   socket.emit('hello', 'world');
   socket.on('chat', function(msg) {
     console.log(msg);
