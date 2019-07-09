@@ -14,6 +14,12 @@ export default function InitSocket(phone, {dispatch, watchSocketStatus}) {
     socket.on('hello', (msg) => {
       console.log({ msg })
     })
+    socket.on('chat', msg => {
+      console.log('chat', msg)
+    })
+    socket.on('chat-feedback', msg => {
+      console.log('chat-feedback', msg)
+    })
     console.log({ connected: socket.connected }); // true
   });
 

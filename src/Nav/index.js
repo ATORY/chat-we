@@ -13,7 +13,8 @@ const Nav = styled.nav`
   flex-direction: column;
   align-items: center;
   /* justify-content: center; */
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
+  overflow: hidden;
   background-color: rgba(0, 0, 0, 0.7);
   padding-top: 30px;
   padding-bottom: 20px;

@@ -14,6 +14,7 @@ const ASide = styled.div`
 
 const StyledRoom = styled.div`
   display: flex;
+  background-color: ${props => (props.select ? 'gray' : 'white')};
   padding: 5px;
   height: 61px;
   box-sizing: border-box;
@@ -41,10 +42,10 @@ const StyledConnector = styled.div`
   border-bottom: 1px solid lightgray;
 `;
 
-function Room({ id, name, people }) {
+function Room({ id, name, people, selectRow }) {
   const roomName = name || people[0].phone;
   return (
-    <StyledRoom>
+    <StyledRoom select={id===selectRow}>
       <div className="people">
         {people.map(({ phone }) => (
           <span key={phone}>
@@ -65,10 +66,18 @@ function Room({ id, name, people }) {
   );
 }
 
-function Connector({ phone, selectRow, select, dispatch }) {
+function Chat({ phone, setSelectRow, selectRow }) {
+  return (
+    <StyledRoom select={phone===selectRow}>
+      <span>{phone}</span>
+    </StyledRoom>
+  );
+}
+
+function Connector({ phone, selectRow, setSelectRow, dispatch }) {
   return (
     <StyledConnector select={phone === selectRow} onClick={() => {
-      select(phone)
+      setSelectRow(phone)
       dispatch({ type: SELECT_CONNECTOR, data: { phone } })
     }}>
       <span>
@@ -89,19 +98,20 @@ function Connector({ phone, selectRow, select, dispatch }) {
 
 export default function Index() {
   const [selectRow, setSelectRow] = useState('');
-  function select(row) {
-    setSelectRow(row)
-  }
   return (
     <ChatContext.Consumer>
       {({ dispatch, middle, nav }) => {
-        const { rooms, connectors } = middle;
+        const { rooms, connectors, chats, select } = middle;
         const { bubble, connector } = nav;
+        // setSelectRow(select)
         if (bubble.active) {
           return (
             <ASide>
               {rooms.map(room => (
-                <Room key={room.id} {...room} selectRow={selectRow} select={select} dispatch={dispatch} />
+                <Room key={room.id} {...room} selectRow={select} dispatch={dispatch} />
+              ))}
+              {chats.map(chat => (
+                <Chat key={chat.phone} {...chat} selectRow={select} dispatch={dispatch}/>
               ))}
             </ASide>
           );
@@ -110,7 +120,7 @@ export default function Index() {
           return (
             <ASide>
               {connectors.map(connector => (
-                <Connector key={connector.phone} {...connector} selectRow={selectRow} select={select} dispatch={dispatch} />
+                <Connector key={connector.phone} {...connector} selectRow={selectRow} setSelectRow={setSelectRow} dispatch={dispatch} />
               ))}
             </ASide>
           );

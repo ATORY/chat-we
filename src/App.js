@@ -53,23 +53,23 @@ function PreApp() {
 }
 
 function App({ phone }) {
-  let socket = '';
-  const [socketStatus, setSocketStatus] = useState('');  
+  const [socketStatus, setSocketStatus] = useState('');
+  const [socket, setSocket] = useState('');
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    socket = initSocket(phone, { dispatch, watchSocketStatus: setSocketStatus });
+    setSocket(initSocket(phone, { dispatch, watchSocketStatus: setSocketStatus }));
   }, [])
 
   console.log({ socketStatus })
   return (
-    <ChatContext.Provider value={{ dispatch, ...state }}>
+    <ChatContext.Provider value={{ dispatch, ...state, socket }}>
       <GlobalStyle />
       <AppContainer>
         <Nav dispatch={dispatch} {...state.nav} socketStatus={socketStatus} />
-        <ASide socket={socket} />
-        <Main socket={socket} />
+        <ASide />
+        <Main phone={phone} />
       </AppContainer>
     </ChatContext.Provider>
   );

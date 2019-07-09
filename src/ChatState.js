@@ -12,6 +12,7 @@ export const initialState = {
         }
     },
     middle: {
+        select: '',
         rooms: [
             {
                 id: '1',
@@ -25,6 +26,8 @@ export const initialState = {
                     }
                 ]
             }
+        ],
+        chats: [
         ],
         connectors: [
             {
@@ -74,9 +77,14 @@ export function reducer(state, action) {
     console.log(action.type)
     switch (action.type) {
         case SEND_MESSAGE: {
+            const { connector } = action.data
             state.nav.bubble.active = true;
             state.nav.connector.active = false;
             state.main.type = 'bubble'
+            state.middle.select = connector;
+            state.middle.chats.push({
+                phone: connector
+            })
             return {
                 ...state
             }

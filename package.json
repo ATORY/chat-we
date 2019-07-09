@@ -25,7 +25,9 @@
     "update-electron-app": "^1.4.2"
   },
   "nodemonConfig": {
-    "watch": ["server"],
+    "watch": [
+      "server"
+    ],
     "delay": "1000"
   },
   "eslintConfig": {
