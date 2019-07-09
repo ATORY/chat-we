@@ -1,5 +1,5 @@
 const http = require('http');
-
+const url = require('url');
 const Koa = require('koa');
 const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
@@ -31,21 +31,57 @@ router.post('/login', ctx => {
 
 app.use(router.routes()).use(router.allowedMethods());
 
-const rooms = {
+const onLine = {};
+const rooms = {};
+
+/**
+ * 正常情况下这个 ID 是要不可预测的。
+ */
+io.engine.generateId = function(req) {
+  const urlObj = url.parse(req.url, true);
+  return urlObj.query.phone;
 };
 
+// const nsp = io.of('/my-namespace');
+// nsp.on('connection', function(socket){
+//   console.log('someone connected');
+// });
+// nsp.emit('hi', 'everyone!');
 
 io.on('connection', function(socket) {
-  console.log('connected', socket.id, socket.request, socket.rooms);
-  // socket request token check
-  // if notValid socket.emit needLogin
-  socket.emit('hello', 'world');
-  socket.on('chat', function(msg) {
-    console.log(msg);
-    io.emit('chat', msg + '222222');
+  console.log('connected');
+  // IncomingMessage 可做验证？
+  // console.log(socket.request.url);
+  // console.log(socket.id);
+  // console.log(socket.rooms);
+
+  const socketID = socket.id;
+  onLine[socketID] = socket;
+
+  // socket.emit('hello', 'world');
+  socket.on('chat', function(message) {
+    // console.log(msg);
+    // console.log(typeof msg)
+    const { from, to, msg } = message;
+    if (onLine[to]) {
+      onLine[to].emit('chat', {});
+    } else {
+      onLine[from].emit('chat-feedback', {
+        from: 'sys',
+        to,
+        msg: { type: 'string', data: '对方未在线，消息未送达' }
+      });
+    }
+    // console.log(onLine);
+    // io.emit('chat', msg + '222222');
   });
+
   socket.on('say to someone', function(id, msg) {
     socket.broadcast.to(id).emit('my message', msg);
+  });
+  socket.on('disconnect', function() {
+    console.log(delete onLine[socketID]);
+    console.log({ onLine });
   });
 });
 

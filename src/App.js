@@ -1,9 +1,11 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components'
 
 import { ChatContext, reducer, initialState } from './ChatState';
-import logo from './logo.svg';
-import defaultAvator from './account.svg'
+import Nav from './Nav'
+import ASide from './ASide'
+import Main from './Main'
+import initSocket from './socketIO'
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -13,6 +15,10 @@ const GlobalStyle = createGlobalStyle`
   }
   .electron-drag {
     -webkit-app-region: 'drag'
+  }
+
+  span svg {
+    vertical-align: bottom;
   }
 `
 
@@ -27,59 +33,46 @@ const AppContainer = styled.div`
   background: #eeeeee;
 `
 
-const Nav = styled.nav`
-  width: 80px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* justify-content: center; */
-  overflow-y: scroll;
-  background-color: #000;
-  padding-top: 30px;
-  padding-bottom: 20px;
-  & .avator {
-    background: gray;
-    display: inline-block;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    border: 1px solid #fff;
+function PreApp() {
+  const [check, setCheck] = useState(false)
+  const [phone, setPhone] = useState('');
+  if (!check) {
+    return (
+      <AppContainer>
+        <div>
+          <input value={phone} onChange={(e) => {setPhone(e.target.value)}} />
+          <button onClick={() => {
+            if (phone.length !== 11) return;
+            setCheck(true)
+          }}>OK</button>
+        </div>
+      </AppContainer>
+    )
   }
-  & .App-logo {
-    width: 60px;
-    /* align-self: flex-end; */
-    justify-self: flex-end;
-  }
-`
+  return <App phone={phone} />
+}
 
-const ASide = styled.div`
-  width: 230px;
-  border: 1px solid #d3d3d3;
-  border-top: none;
-  border-bottom: none;
-  overflow-y: scroll;
-`
-
-const Main = styled.main`
-  flex-grow: 1;
-  overflow-y: scroll;
-`
-
-function App() {
+function App({ phone }) {
+  let socket = '';
+  const [socketStatus, setSocketStatus] = useState('');  
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    socket = initSocket(phone, { dispatch, watchSocketStatus: setSocketStatus });
+  }, [])
+
+  console.log({ socketStatus })
   return (
     <ChatContext.Provider value={{ dispatch, ...state }}>
       <GlobalStyle />
       <AppContainer>
-        <Nav>
-          <img src={defaultAvator} className="avator" alt="avator" />
-          <img src={logo} className="App-logo" alt="logo" />
-        </Nav>
-        <ASide></ASide>
-        <Main></Main>
+        <Nav dispatch={dispatch} {...state.nav} socketStatus={socketStatus} />
+        <ASide socket={socket} />
+        <Main socket={socket} />
       </AppContainer>
     </ChatContext.Provider>
   );
 }
 
-export default App;
+export default PreApp;

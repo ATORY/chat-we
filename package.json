@@ -14,13 +14,19 @@
   "dependencies": {
     "electron-log": "^3.0.6",
     "koa": "^2.7.0",
+    "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
+    "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.1",
     "socket.io": "^2.2.0",
     "styled-components": "^4.3.2",
     "update-electron-app": "^1.4.2"
+  },
+  "nodemonConfig": {
+    "watch": ["server"],
+    "delay": "1000"
   },
   "eslintConfig": {
     "extends": "react-app"
