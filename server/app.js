@@ -94,6 +94,17 @@ io.on('connection', function(socket) {
     rooms[roomId] = io.of(`/${roomId}`);
   });
 
+  socket.on('joinRoom', function(message) {
+    const { ids, roomId } = message;
+    if (rooms[roomId]) {
+      ids.forEach(id => {
+        if (onLine[id]) {
+          onLine[id].join(roomId);
+        }
+      });
+    }
+  });
+
   socket.on('say to someone', function(id, msg) {
     socket.broadcast.to(id).emit('my message', msg);
   });

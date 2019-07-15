@@ -1,5 +1,7 @@
 # chat-we
 
+![](./XpnfM7aNeP.gif)
+
 ## 博文
 
 1. [起因](https://wesy.club/story/5d1c3db57c1640391f5c7fbf)
