@@ -81,6 +81,19 @@ io.on('connection', function(socket) {
     // io.emit('chat', msg + '222222');
   });
 
+  socket.on('createRoom', function() {
+    const roomIds = Object.keys(rooms);
+    let roomId = Math.random()
+      .toString(36)
+      .substr(2);
+    while (roomIds.includes(roomId)) {
+      roomId = Math.random()
+        .toString(36)
+        .substr(2);
+    }
+    rooms[roomId] = io.of(`/${roomId}`);
+  });
+
   socket.on('say to someone', function(id, msg) {
     socket.broadcast.to(id).emit('my message', msg);
   });
