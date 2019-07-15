@@ -41,7 +41,7 @@ const Main = styled.main`
 `;
 
 
-function Messager({ id, socket, phone}) {
+function Messager({ id, socket, phone, chat}) {
   const textRef = React.createRef()
   const [msg, setMsg] = useState('')
 
@@ -50,14 +50,22 @@ function Messager({ id, socket, phone}) {
   }, [])
 
   function sendMessage() {
-    console.log(socket)
-    socket.emit('chat', { from: phone, to: id, data: {} })
+    // console.log(socket)
+    socket.emit('chat', { from: phone, to: id, data: { msg } })
+    setMsg('')
   }
 
   return (
     <>
       <div className="title">{id}</div>
-      <div className="record"></div>
+      <div className="record">
+        {chat.chat.map(item => {
+          // console.log(item)
+          return (
+            <div key={Math.random().toString(36).substr(2)}>{item.msg.msg.data}</div>
+          );
+        })}
+      </div>
       <div className="input">
         <div className="toolbar">toolbar</div>
         <div className="text-input">
@@ -78,9 +86,10 @@ export default function Index({ phone }) {
     <ChatContext.Consumer>
       {({ dispatch, middle, main, socket }) => {
         if (main.type === "bubble") {
+          const chat = middle.chats.find(item => item.phone === middle.select) || { chat: [] }
           return (
             <Main>
-              <Messager id={middle.select} socket={socket} phone={phone}/>
+              <Messager id={middle.select} socket={socket} phone={phone} chat={chat}/>
             </Main>
           );
         }

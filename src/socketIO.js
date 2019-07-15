@@ -1,5 +1,7 @@
 import io from 'socket.io-client';
 
+import { ON_MESSAGE, ON_FEEDBACK } from './ChatState'
+
 export default function InitSocket(phone, {dispatch, watchSocketStatus}) {
 
   const socket = io(`http://localhost:9877?phone=${phone}`, {
@@ -15,10 +17,12 @@ export default function InitSocket(phone, {dispatch, watchSocketStatus}) {
       console.log({ msg })
     })
     socket.on('chat', msg => {
-      console.log('chat', msg)
+      dispatch({ type: ON_MESSAGE, data: { msg } })
+      // console.log('chat', msg)
     })
     socket.on('chat-feedback', msg => {
-      console.log('chat-feedback', msg)
+      dispatch({ type: ON_FEEDBACK, data: { msg } })
+      // console.log('chat-feedback', msg)
     })
     console.log({ connected: socket.connected }); // true
   });

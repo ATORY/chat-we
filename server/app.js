@@ -62,9 +62,14 @@ io.on('connection', function(socket) {
   socket.on('chat', function(message) {
     // console.log(msg);
     // console.log(typeof msg)
-    const { from, to, msg } = message;
+    const { from, to, data } = message;
     if (onLine[to]) {
-      onLine[to].emit('chat', {});
+      console.log({ data });
+      onLine[to].emit('chat', {
+        from,
+        to,
+        msg: { type: 'string', data: data.msg }
+      });
     } else {
       onLine[from].emit('chat-feedback', {
         from: 'sys',
@@ -81,7 +86,7 @@ io.on('connection', function(socket) {
   });
   socket.on('disconnect', function() {
     console.log(delete onLine[socketID]);
-    console.log({ onLine });
+    // console.log({ onLine });
   });
 });
 

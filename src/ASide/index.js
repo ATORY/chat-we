@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 
-import { ChatContext, SELECT_CONNECTOR } from "../ChatState";
+import { ChatContext, SELECT_CONNECTOR, SELECT_CHAT } from "../ChatState";
 
 const ASide = styled.div`
   width: 230px;
@@ -42,10 +42,12 @@ const StyledConnector = styled.div`
   border-bottom: 1px solid lightgray;
 `;
 
-function Room({ id, name, people, selectRow }) {
+function Room({ id, name, people, selectRow, dispatch }) {
   const roomName = name || people[0].phone;
   return (
-    <StyledRoom select={id===selectRow}>
+    <StyledRoom select={id===selectRow} onClick={() => dispatch(
+      { type: SELECT_CHAT, data: { select: id } }
+    )}>
       <div className="people">
         {people.map(({ phone }) => (
           <span key={phone}>
@@ -66,18 +68,19 @@ function Room({ id, name, people, selectRow }) {
   );
 }
 
-function Chat({ phone, setSelectRow, selectRow }) {
+function Chat({ phone, dispatch, selectRow }) {
   return (
-    <StyledRoom select={phone===selectRow}>
+    <StyledRoom select={phone===selectRow} onClick={() => dispatch(
+      { type: SELECT_CHAT, data: { select: phone } }
+    )}>
       <span>{phone}</span>
     </StyledRoom>
   );
 }
 
-function Connector({ phone, selectRow, setSelectRow, dispatch }) {
+function Connector({ phone, selectRow, dispatch }) {
   return (
     <StyledConnector select={phone === selectRow} onClick={() => {
-      setSelectRow(phone)
       dispatch({ type: SELECT_CONNECTOR, data: { phone } })
     }}>
       <span>
@@ -97,7 +100,7 @@ function Connector({ phone, selectRow, setSelectRow, dispatch }) {
 }
 
 export default function Index() {
-  const [selectRow, setSelectRow] = useState('');
+  // const [selectRow, setSelectRow] = useState('');
   return (
     <ChatContext.Consumer>
       {({ dispatch, middle, nav }) => {
@@ -120,7 +123,7 @@ export default function Index() {
           return (
             <ASide>
               {connectors.map(connector => (
-                <Connector key={connector.phone} {...connector} selectRow={selectRow} setSelectRow={setSelectRow} dispatch={dispatch} />
+                <Connector key={connector.phone} {...connector} selectRow={select} dispatch={dispatch} />
               ))}
             </ASide>
           );

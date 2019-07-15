@@ -28,6 +28,10 @@ export const initialState = {
             }
         ],
         chats: [
+            {
+                phone: '12345678901',
+                chat: []
+            }
         ],
         connectors: [
             {
@@ -72,19 +76,69 @@ export const CONNECTOR_TYPE = 'connector'
 export const SELECT_CONNECTOR = 'select-connector'
 export const SEND_MESSAGE = 'send-message'
 export const SET_ACCOUNT = 'set-account'
+export const SELECT_CHAT = 'select-chat'
+export const ON_MESSAGE = 'on-message'
+export const ON_FEEDBACK = 'on-feedback'
   
 export function reducer(state, action) {
     console.log(action.type)
     switch (action.type) {
+
+        case ON_FEEDBACK: {
+            const { msg } = action.data;
+            const { to } = msg;
+            const chat = state.middle.chats.find(item => item.phone === to)
+            if (!chat) {
+                state.middle.chats.push({
+                    phone: to,
+                    chat: [{
+                        msg
+                    }]
+                })
+            }else {
+                chat.chat.push({msg})
+            }
+            return {
+                ...state
+            }
+        }
+        case ON_MESSAGE: {
+            const { msg } = action.data;
+            console.log(ON_MESSAGE, msg)
+            const { from } = msg;
+            const chat = state.middle.chats.find(item => item.phone === from)
+            if (!chat) {
+                state.middle.chats.push({
+                    phone: from,
+                    chat: [{
+                        msg
+                    }]
+                })
+            }else {
+                chat.chat.push({msg})
+            }
+            return {
+                ...state
+            }
+        }
+        case SELECT_CHAT: {
+            const { select } = action.data
+            state.middle.select = select;
+            return {
+                ...state
+            }
+        }
         case SEND_MESSAGE: {
             const { connector } = action.data
             state.nav.bubble.active = true;
             state.nav.connector.active = false;
             state.main.type = 'bubble'
             state.middle.select = connector;
-            state.middle.chats.push({
-                phone: connector
-            })
+            if (!state.middle.chats.find(item => item.phone === connector))
+                state.middle.chats.push({
+                    phone: connector,
+                    chat: []
+                })
             return {
                 ...state
             }
@@ -92,8 +146,9 @@ export function reducer(state, action) {
         case SELECT_CONNECTOR: {
             state.nav.bubble.active = false;
             state.nav.connector.active = true;
-            state.main.type = 'connector'
-            state.main.connector.phone = action.data.phone
+            state.middle.select = action.data.phone;
+            state.main.type = 'connector';
+            state.main.connector.phone = action.data.phone;
             return {
                 ...state
             }
