@@ -37,10 +37,10 @@ const rooms = {};
 /**
  * 正常情况下这个 ID 是要不可预测的。
  */
-io.engine.generateId = function(req) {
-  const urlObj = url.parse(req.url, true);
-  return urlObj.query.phone;
-};
+// io.engine.generateId = function(req) {
+//   const urlObj = url.parse(req.url, true);
+//   return urlObj.query.phone;
+// };
 
 // const nsp = io.of('/my-namespace');
 // nsp.on('connection', function(socket){
@@ -49,12 +49,6 @@ io.engine.generateId = function(req) {
 // nsp.emit('hi', 'everyone!');
 
 io.on('connection', function(socket) {
-  console.log('connected');
-  // IncomingMessage 可做验证？
-  // console.log(socket.request.url);
-  // console.log(socket.id);
-  // console.log(socket.rooms);
-
   const socketID = socket.id;
   onLine[socketID] = socket;
 
@@ -62,6 +56,7 @@ io.on('connection', function(socket) {
   socket.on('chat', function(message) {
     // console.log(msg);
     // console.log(typeof msg)
+    console.log(io.sockets.rooms);
     const { from, to, data } = message;
     if (onLine[to]) {
       console.log({ data });
@@ -82,6 +77,7 @@ io.on('connection', function(socket) {
   });
 
   socket.on('createRoom', function() {
+    console.log('createRoom');
     const roomIds = Object.keys(rooms);
     let roomId = Math.random()
       .toString(36)
@@ -91,26 +87,33 @@ io.on('connection', function(socket) {
         .toString(36)
         .substr(2);
     }
-    rooms[roomId] = io.of(`/${roomId}`);
+    console.log({ roomId });
+    rooms[roomId] = roomId;
+    socket.join(roomId);
+    socket.emit('roomJoined', roomId);
   });
 
   socket.on('joinRoom', function(message) {
-    const { ids, roomId } = message;
-    if (rooms[roomId]) {
-      ids.forEach(id => {
-        if (onLine[id]) {
-          onLine[id].join(roomId);
-        }
-      });
-    }
+    const { roomId } = message;
+    socket.join(roomId);
+    console.log(socket.rooms);
+    socket.emit('roomJoined', roomId);
   });
 
-  socket.on('say to someone', function(id, msg) {
-    socket.broadcast.to(id).emit('my message', msg);
+  socket.on('roomMsg', ({ roomId, msg }) => {
+    io.sockets.in(roomId).emit('message', {
+      data: 'what is going on, party people?',
+      roomId,
+      msg,
+      from: socket.id,
+      random: Math.random()
+        .toString(36)
+        .substr(2)
+    });
   });
+
   socket.on('disconnect', function() {
     console.log(delete onLine[socketID]);
-    // console.log({ onLine });
   });
 });
 

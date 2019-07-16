@@ -15,14 +15,24 @@ socket.on("connect", () => {
       console.log(msg)
   })
 
-  socket.on('room', () => {
-
+  socket.on('room', (msg) => {
+    console.log('room', msg)
   })
 
   socket.on("hello", msg => {
     console.log({ msg });
     socket.emit('chat', {from: '12345678901', to: '12345678902', msg: { type: 'string', data: 'hi' }})
   });
+
+  // socket.emit('createRoom', (msg) => {
+  //   console.log({ msg })
+  // });
+
+  socket.emit('joinRoom', { roomId: '69qhkb7lw39' })
+  socket.on('hi', msg => {
+    console.log('hi', msg)
+  })
+
   console.log({ connected: socket.connected }); // true
 });
 
