@@ -1,8 +1,9 @@
 import io from 'socket.io-client';
 
-import { ON_MESSAGE, ON_FEEDBACK } from './ChatState'
+import { watchSocketStatus } from '../actions/socketStatus'
+// import { ON_MESSAGE, ON_FEEDBACK } from '../constants'
 
-export default function InitSocket(phone, {dispatch, watchSocketStatus}) {
+export default function InitSocket(phone) {
 
   const socket = io(`http://localhost:9877?phone=${phone}`, {
     reconnection: true,
@@ -17,11 +18,11 @@ export default function InitSocket(phone, {dispatch, watchSocketStatus}) {
       console.log({ msg })
     })
     socket.on('chat', msg => {
-      dispatch({ type: ON_MESSAGE, data: { msg } })
+      // dispatch({ type: ON_MESSAGE, data: { msg } })
       // console.log('chat', msg)
     })
     socket.on('chat-feedback', msg => {
-      dispatch({ type: ON_FEEDBACK, data: { msg } })
+      // dispatch({ type: ON_FEEDBACK, data: { msg } })
       // console.log('chat-feedback', msg)
     })
     console.log({ connected: socket.connected }); // true
@@ -50,7 +51,7 @@ export default function InitSocket(phone, {dispatch, watchSocketStatus}) {
   });
 
   socket.on('reconnect_error', (error) => {
-    watchSocketStatus('reconnecting...')
+    watchSocketStatus('reconnect_error')
     // console.log('reconnecting..')
   });
 

@@ -1,0 +1,24 @@
+import {
+    SOCKET_STATUS_CONNECT,
+    SOCKET_STATUS_CONNECT_ERROR,
+    SOCKET_STATUS_CONNECT_TIMEOUT,
+    SOCKET_STATUS_RECONNECT,
+    SOCKET_STATUS_RECONNECTING,
+    SOCKET_STATUS_RECONNECT_ATTEMPT,
+    SOCKET_STATUS_RECONNECT_ERROR
+} from '../constants'
+
+export default (state = 'init', action) => {
+  switch (action.type) {
+    case SOCKET_STATUS_CONNECT:
+    case SOCKET_STATUS_CONNECT_ERROR:
+    case SOCKET_STATUS_CONNECT_TIMEOUT:
+    case SOCKET_STATUS_RECONNECT:
+    case SOCKET_STATUS_RECONNECTING:
+    case SOCKET_STATUS_RECONNECT_ATTEMPT:
+    case SOCKET_STATUS_RECONNECT_ERROR:
+      return action.type
+    default:
+      return state
+  }
+}

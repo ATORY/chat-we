@@ -1,11 +1,18 @@
-import React, { useReducer, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
+import { ConnectedRouter } from 'connected-react-router'
+import { Route, Switch } from 'react-router-dom'
 import styled, { createGlobalStyle } from 'styled-components'
 
-import { ChatContext, reducer, initialState } from './ChatState';
-import Nav from './Nav'
-import ASide from './ASide'
-import Main from './Main'
-import initSocket from './socketIO'
+import Explore from 'components/Explore'
+import Chat from 'components/Chat'
+import Connector from 'components/Connector'
+import NoMatch from 'components/NoMatch'
+import NavBar from 'components/NavBar'
+import initSocket from 'api/socketIO'
+import { ChatContext } from 'store'
+
+console.log(Chat)
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -33,46 +40,33 @@ const AppContainer = styled.div`
   background: #eeeeee;
 `
 
-function PreApp() {
-  const [check, setCheck] = useState(false)
-  const [phone, setPhone] = useState('');
-  if (!check) {
-    return (
-      <AppContainer>
-        <div>
-          <input value={phone} onChange={(e) => {setPhone(e.target.value)}} />
-          <button onClick={() => {
-            if (phone.length !== 11) return;
-            setCheck(true)
-          }}>OK</button>
-        </div>
-      </AppContainer>
-    )
-  }
-  return <App phone={phone} />
-}
-
-function App({ phone }) {
-  const [socketStatus, setSocketStatus] = useState('');
+function App({ history }) {
   const [socket, setSocket] = useState('');
-  const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    setSocket(initSocket(phone, { dispatch, watchSocketStatus: setSocketStatus }));
+    setSocket(initSocket('userID'));
   }, [])
 
-  console.log({ socketStatus })
   return (
-    <ChatContext.Provider value={{ dispatch, ...state, socket }}>
+    <ChatContext.Provider value={{ socket }}>
       <GlobalStyle />
-      <AppContainer>
-        <Nav dispatch={dispatch} {...state.nav} socketStatus={socketStatus} />
-        <ASide />
-        <Main phone={phone} />
-      </AppContainer>
+      <ConnectedRouter history={history}>
+        <AppContainer>
+          <NavBar />
+          <Switch>
+            <Route path="/chat" component={Chat} />
+            <Route path="/connector" component={Connector} />
+            <Route path="/explore" component={Explore} />
+            <Route component={NoMatch} />
+          </Switch>
+        </AppContainer>
+      </ConnectedRouter>
     </ChatContext.Provider>
-  );
+  )
 }
 
-export default PreApp;
+App.propTypes = {
+  history: PropTypes.object,
+}
+
+export default App
