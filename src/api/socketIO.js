@@ -1,8 +1,13 @@
 import io from 'socket.io-client';
 
-import { ON_MESSAGE, ON_FEEDBACK } from './ChatState'
+import {
+  watchSocketStatus,
+  onSocketMessages,
+  onRoomJioned
+} from '../actions/socketStatus'
+// import { ON_MESSAGE, ON_FEEDBACK } from '../constants'
 
-export default function InitSocket(phone, {dispatch, watchSocketStatus}) {
+export default function InitSocket({ phone }) {
 
   const socket = io(`http://localhost:9877?phone=${phone}`, {
     reconnection: true,
@@ -13,18 +18,27 @@ export default function InitSocket(phone, {dispatch, watchSocketStatus}) {
 
   socket.on('connect', () => {
     watchSocketStatus('connect')
-    socket.on('hello', (msg) => {
-      console.log({ msg })
+    
+    socket.on('message', msg => {
+      onSocketMessages(msg)
     })
-    socket.on('chat', msg => {
-      dispatch({ type: ON_MESSAGE, data: { msg } })
-      // console.log('chat', msg)
+    // 加入房间
+    socket.on('roomJoined', (msg) => {
+      onRoomJioned(msg)
     })
-    socket.on('chat-feedback', msg => {
-      dispatch({ type: ON_FEEDBACK, data: { msg } })
-      // console.log('chat-feedback', msg)
+
+    socket.on('message-feedback', msg => {
+      console.log('chat-feedback', msg)
     })
+    // socket.emit("joinRoom", { roomId: 'w2gnst2o7dj' });
     console.log({ connected: socket.connected }); // true
+  });
+
+  socket.on('error', function(err) {
+    // console.error(err)
+    if (err === 'Authentication error') {
+      console.log('setPhone')
+    }
   });
 
   socket.on('connect_error', (msg) => {
@@ -35,6 +49,12 @@ export default function InitSocket(phone, {dispatch, watchSocketStatus}) {
   socket.on('connect_timeout', () => {
     watchSocketStatus('connect_timeout')
   })
+
+  socket.on("disconnect", msg => {
+    socket.off('roomJoined')
+    socket.off('message')
+    console.log('disconnect...');
+  });
 
   socket.on('reconnect', (attemptNumber) => {
     watchSocketStatus('reconnect:' + attemptNumber)
@@ -50,7 +70,7 @@ export default function InitSocket(phone, {dispatch, watchSocketStatus}) {
   });
 
   socket.on('reconnect_error', (error) => {
-    watchSocketStatus('reconnecting...')
+    watchSocketStatus('reconnect_error')
     // console.log('reconnecting..')
   });
 

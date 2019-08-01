@@ -1,5 +1,4 @@
 const http = require('http');
-const url = require('url');
 const Koa = require('koa');
 const Router = require('koa-router');
 const bodyParser = require('koa-bodyparser');
@@ -31,6 +30,7 @@ router.post('/login', ctx => {
 
 app.use(router.routes()).use(router.allowedMethods());
 
+const socketIds = {};
 const onLine = {};
 const rooms = {};
 
@@ -48,25 +48,39 @@ const rooms = {};
 // });
 // nsp.emit('hi', 'everyone!');
 
-io.on('connection', function(socket) {
+io.use(function(socket, next) {
+  if (socket.handshake.query && socket.handshake.query.phone) {
+    next();
+    // if (socket.handshake.query && socket.handshake.query.token){
+    //   jwt.verify(socket.handshake.query.token, 'SECRET_KEY', function(err, decoded) {
+    //     if(err) return next(new Error('Authentication error'));
+    //     socket.decoded = decoded;
+    //     next();
+    //   });
+  } else {
+    next(new Error('Authentication error'));
+  }
+}).on('connection', function(socket) {
   const socketID = socket.id;
   onLine[socketID] = socket;
-
+  const phone = socket.handshake.query && socket.handshake.query.phone;
+  socketIds[phone] = socketID;
   // socket.emit('hello', 'world');
-  socket.on('chat', function(message) {
+  socket.on('message', function(message) {
     // console.log(msg);
     // console.log(typeof msg)
     console.log(io.sockets.rooms);
     const { from, to, data } = message;
-    if (onLine[to]) {
+    const toId = socketIds[to];
+    if (onLine[toId]) {
       console.log({ data });
-      onLine[to].emit('chat', {
+      onLine[toId].emit('message', {
         from,
         to,
         msg: { type: 'string', data: data.msg }
       });
     } else {
-      onLine[from].emit('chat-feedback', {
+      socket.emit('message-feedback', {
         from: 'sys',
         to,
         msg: { type: 'string', data: '对方未在线，消息未送达' }
@@ -116,6 +130,9 @@ io.on('connection', function(socket) {
     console.log(delete onLine[socketID]);
   });
 });
+// .on('error', (err, socket) => {
+//   console.log(err);
+// });
 
 server.listen(PORT, () => {
   console.log(`Server is starting on port ${PORT}`);
