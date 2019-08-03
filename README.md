@@ -1,6 +1,6 @@
 # chat-we
 
-![](./XpnfM7aNeP.gif)
+![](./F6Ue9izbxT.gif)
 
 ## 博文
 

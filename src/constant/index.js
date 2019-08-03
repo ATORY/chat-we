@@ -15,3 +15,7 @@ export const SOCKET_STATUS_RECONNECT_ATTEMPT = 'reconnect_attempt'
 export const SOCKET_STATUS_RECONNECTING = 'reconnecting'
 export const SOCKET_STATUS_RECONNECT_ERROR = 'reconnect_error'
 export const SOCKET_STATUS_RECONNECT_FAILED = 'reconnect_failed'
+
+export const SOCKET_CHAT = 'socket-chat'
+export const SOCKET_MESSAGES = 'socket-messages'
+export const SOCKET_ROOM_JOINED = 'socket-room-joined'

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { ConnectedRouter } from 'connected-react-router'
-import { Route, Switch } from 'react-router-dom'
+import { Route, Switch, Redirect } from 'react-router-dom'
 import styled, { createGlobalStyle } from 'styled-components'
 
 import Explore from 'components/Explore'
@@ -11,8 +11,6 @@ import NoMatch from 'components/NoMatch'
 import NavBar from 'components/NavBar'
 import initSocket from 'api/socketIO'
 import { ChatContext } from 'store'
-
-console.log(Chat)
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -44,7 +42,7 @@ function App({ history }) {
   const [socket, setSocket] = useState('');
 
   useEffect(() => {
-    setSocket(initSocket('userID'));
+    setSocket(initSocket({ phone: localStorage.getItem('phone') || '' }));
   }, [])
 
   return (
@@ -54,6 +52,9 @@ function App({ history }) {
         <AppContainer>
           <NavBar />
           <Switch>
+            <Route exact path="/" render={() => (
+              <Redirect to="/chat"/>
+            )}/>
             <Route path="/chat" component={Chat} />
             <Route path="/connector" component={Connector} />
             <Route path="/explore" component={Explore} />

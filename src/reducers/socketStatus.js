@@ -6,7 +6,7 @@ import {
     SOCKET_STATUS_RECONNECTING,
     SOCKET_STATUS_RECONNECT_ATTEMPT,
     SOCKET_STATUS_RECONNECT_ERROR
-} from '../constants'
+} from 'constant'
 
 export default (state = 'init', action) => {
   switch (action.type) {
