@@ -3,13 +3,13 @@ import io from 'socket.io-client';
 import {
   watchSocketStatus,
   onSocketMessages,
-  onRoomJioned
+  // onRoomJioned
 } from '../actions/socketStatus'
 // import { ON_MESSAGE, ON_FEEDBACK } from '../constants'
 
-export default function InitSocket({ phone }) {
-
-  const socket = io(`http://localhost:9877?phone=${phone}`, {
+export default function InitSocket({ token }) {
+  console.log('initAuth')
+  const socket = io(`http://localhost:9877?token=${token}`, {
     reconnection: true,
     reconnectionAttempts: 10,
     reconnectionDelay: 2 * 1000,
@@ -23,13 +23,13 @@ export default function InitSocket({ phone }) {
       onSocketMessages(msg)
     })
     // 加入房间
-    socket.on('roomJoined', (msg) => {
-      onRoomJioned(msg)
-    })
+    // socket.on('roomJoined', (msg) => {
+    //   onRoomJioned(msg)
+    // })
 
-    socket.on('message-feedback', msg => {
-      console.log('chat-feedback', msg)
-    })
+    // socket.on('message-feedback', msg => {
+    //   console.log('chat-feedback', msg)
+    // })
     // socket.emit("joinRoom", { roomId: 'w2gnst2o7dj' });
     console.log({ connected: socket.connected }); // true
   });
@@ -37,8 +37,9 @@ export default function InitSocket({ phone }) {
   socket.on('error', function(err) {
     // console.error(err)
     if (err === 'Authentication error') {
-      console.log('setPhone')
+      console.log('socket authentication error')
     }
+    watchSocketStatus('auth_err')
   });
 
   socket.on('connect_error', (msg) => {
@@ -51,7 +52,7 @@ export default function InitSocket({ phone }) {
   })
 
   socket.on("disconnect", msg => {
-    socket.off('roomJoined')
+    // socket.off('roomJoined')
     socket.off('message')
     console.log('disconnect...');
   });

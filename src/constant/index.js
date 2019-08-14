@@ -7,6 +7,7 @@ export const SELECT_CHAT_WITH = 'select-chat-WITH'
 export const ON_MESSAGE = 'on-message'
 export const ON_FEEDBACK = 'on-feedback'
 
+export const SOCKET_STATUS = 'socket-status'
 export const SOCKET_STATUS_CONNECT = 'connect'
 export const SOCKET_STATUS_CONNECT_ERROR = 'connect_error'
 export const SOCKET_STATUS_CONNECT_TIMEOUT = 'connect_timeout'
@@ -19,3 +20,9 @@ export const SOCKET_STATUS_RECONNECT_FAILED = 'reconnect_failed'
 export const SOCKET_CHAT = 'socket-chat'
 export const SOCKET_MESSAGES = 'socket-messages'
 export const SOCKET_ROOM_JOINED = 'socket-room-joined'
+
+export const AUTHORIZATION_ERR = 'authorization-err'
+
+export const USER_LOGIN = 'user-login'
+export const VISITOR_LOGIN = 'visitor-login'
+export const JUST_LOOK= 'just-look'

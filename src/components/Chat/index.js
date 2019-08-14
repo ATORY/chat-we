@@ -49,12 +49,11 @@ function Index({ match, chat, selectChat }) {
           {withChats.map((chatWith) => {
             return (
               <li key={chatWith.id} className={currentWith.id === chatWith.id ? 'active' : ''} onClick={() => {
-                console.log('click');
                 selectChat(chatWith)
               }}>
                 <div>{chatWith.name}</div>
               </li>
-              )
+            )
           })}
         </ul>
       </ASide>

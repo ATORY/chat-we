@@ -1,10 +1,11 @@
 import { store } from 'store'
-import { SOCKET_MESSAGES, SOCKET_ROOM_JOINED, SOCKET_CHAT } from 'constant'
+import { SOCKET_MESSAGES, SOCKET_ROOM_JOINED, SOCKET_CHAT, SOCKET_STATUS } from 'constant'
 
 export const watchSocketStatus = (status) => {
   console.log({ status })
   store.dispatch({
-    type: status
+    type: SOCKET_STATUS,
+    status
   })
 }
 

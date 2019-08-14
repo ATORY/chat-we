@@ -103,7 +103,7 @@ function Index({ chatWith, sendMessage }) {
   return (
     <ChatContext.Consumer>
       {({ socket }) => {
-        console.log(socket);
+        // console.log(socket);
         // const chat = middle.chats.find(item => item.phone === middle.select) || { chat: [] }
         return <Messager socket={socket} chat={chatWith} sendMessage={sendMessage} />;
       }}

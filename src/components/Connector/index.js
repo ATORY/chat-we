@@ -5,39 +5,18 @@ import { Link, Route } from "react-router-dom";
 // import PropTypes from "prop-types";
 // import { connect } from "react-redux";
 import Person from "./Person";
+import Connector from './Connector';
 
 const Main = styled.div`
   display: flex;
   flex-direction: row;
 `;
 
-const ASide = styled.div`
-  width: 230px;
-  background: white;
-  /* border: 1px solid #d3d3d3; */
-  border-top: none;
-  border-bottom: none;
-  overflow-y: scroll;
-`;
-
-
 export default function Index({ match }) {
   // console.log(match);
   return (
     <Main>
-      <ASide>
-        <ul>
-          <li>
-            <Link to={`${match.url}/rendering`}>Rendering with React</Link>
-          </li>
-          <li>
-            <Link to={`${match.url}/components`}>Components</Link>
-          </li>
-          <li>
-            <Link to={`${match.url}/props-v-state`}>Props v. State</Link>
-          </li>
-        </ul>
-      </ASide>
+      <Connector path={match.path} />
       <Route path={`${match.path}/:id`} component={Person} />
     </Main>
   );

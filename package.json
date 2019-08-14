@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "main": "electron/main.js",
+  "proxy": "http://localhost:9877/",
   "scripts": {
     "server:dev": "NODE_ENV=development nodemon server/app.js",
     "electron:dev": "ELECTRON_START_URL=http://localhost:9876 electron . --debug",
