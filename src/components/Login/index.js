@@ -25,9 +25,6 @@ function Index({ loginASVisitor }) {
     <StyledDiv>
       Login
       <div onClick={loginASVisitor}>游客</div>
-      <Link to='/explore'>
-        <div>只是看看</div>
-      </Link>
     </StyledDiv>
   )
 }

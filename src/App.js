@@ -16,7 +16,7 @@ import NavBar from 'components/NavBar'
 import Login from 'components/Login'
 import initSocket from 'api/socketIO'
 import { ChatContext, store } from 'store'
-import { AUTHORIZATION_ERR } from 'constant'
+import { AUTHORIZATION_ERR, VISITOR_LOGIN } from 'constant'
 import api from 'api'
 
 const GlobalStyle = createGlobalStyle`
@@ -45,11 +45,31 @@ const AppContainer = styled.div`
   background: #eeeeee;
 `
 
+function LoginRoute({ component: Component, path, base, ...rest }) {
+  return (
+    <Route
+      {...rest}
+      render={props =>
+        base.auth === -1 ? (
+          <Component {...props} />
+        ) : (
+          <Redirect
+            to={{
+              pathname: '/',
+              state: { from: props.location }
+            }}
+          />
+        )
+      }
+    />
+  );
+}
+
 function App({ history, base }) {
   const [socket, setSocket] = useState('');
   const [initDone, setInitDone] = useState(false);
   useEffect(() => {
-    console.log(base)
+    // console.log(base)
     if (base.auth > -1 && !socket) setSocket(initSocket({ token: localStorage.getItem('token') || '' }));
   }, [base])
 
@@ -61,9 +81,18 @@ function App({ history, base }) {
         store.dispatch({
           type: AUTHORIZATION_ERR
         });
+        // store.dispatch(push('/error'));
         store.dispatch(push('/login'));
-      } else {  
-        store.dispatch(push('/error'));
+      } else {
+        // console.log({ result });
+        if (result.auth === 0) {
+          store.dispatch({
+            type: VISITOR_LOGIN,
+            visitor: {
+              ...result
+            }
+          });
+        }
       }
     })
   }, [])
@@ -84,7 +113,7 @@ function App({ history, base }) {
               <Route path="/chat" component={Chat} />
               <Route path="/connector" component={Connector} />
               <Route path="/explore" component={Explore} />
-              <Route path="/login" component={Login} />
+              <LoginRoute path="/login" component={Login} base={base} />
               <Route path="/error" component={ErrorPage} />
               <Route component={NoMatch} />
             </Switch>
@@ -108,4 +137,3 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
 )(App)
-

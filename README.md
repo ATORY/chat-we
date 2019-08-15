@@ -9,3 +9,7 @@
 3. [socket-io](https://wesy.club/story/5d2c40e76c92a476fc84ead0)
 4. [React UI](https://wesy.club/story/5d2c815a6c92a476fc84ead1)
 5. [Redux 管理状态](https://wesy.club/story/5d45a7538bfa641b3e3afb42)
+
+# 构思
+
+话题可见程度，public / private

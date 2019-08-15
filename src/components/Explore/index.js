@@ -1,7 +1,7 @@
 import React from 'react';
 
-export default function Topic() {
+export default function Index() {
   return (
-    <div>Topic</div>
+    <div>Topic, News</div>
   )
 }

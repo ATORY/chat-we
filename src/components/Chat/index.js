@@ -17,6 +17,7 @@ const Main = styled.div`
 const ASide = styled.aside`
   width: 230px;
   background: white;
+  position: relative;
   /* border: 1px solid #d3d3d3; */
   border-top: none;
   border-bottom: none;
@@ -34,8 +35,20 @@ const ASide = styled.aside`
       border-bottom: 1px solid #d3d3d3;
     }
     & .active {
-      background-color: #eaeaea
+      background-color: #eaeaea;
     }
+  }
+
+  & .create-topic {
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid #eaeaea;
   }
 `;
 
@@ -56,6 +69,10 @@ function Index({ match, chat, selectChat }) {
             )
           })}
         </ul>
+        <div className="create-topic">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
+          <span>创建话题</span>
+        </div>
       </ASide>
       <Messager chatWith={currentWith} />
       {/* <Route path={`${match.path}/:id`} component={Messager} /> */}
