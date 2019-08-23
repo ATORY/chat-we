@@ -1,41 +1,29 @@
 // import { store } from 'store'
-import { SELECT_CHAT_WITH, SOCKET_MESSAGES, SEND_MESSAGE } from 'constant'
+import { SELECT_CHAT_WITH, SOCKET_MESSAGES, SEND_MESSAGE, INIT_CHAT_WITH } from 'constant'
 
 const chatReducer = (state = {
-  withChats: [
+  chats: [
     {
-      id: '12345678910',
-      type: 'room',
-      name: 'testRoom',
+      id: '',
+      type: '',
+      name: '',
       chatMsg: []
     },
-    {
-      id: '12345678901',
-      type: 'person',
-      name: '12345678901',
-      chatMsg: []
-    },
-    {
-      id: '12345678902',
-      type: 'person',
-      name: '12345678902',
-      chatMsg: []
-    }
   ],
-  // TODO: currentWith just id in withChats
-  currentWith: {
-    id: '12345678910',
-    type: 'room',
-    name: 'testRoom',
-    chatMsg: []
-  },
+  currentWith: ''
 }, action) => {
   switch (action.type) {
+    case INIT_CHAT_WITH: {
+      return {
+        chats: action.chats,
+        currentWith: action.chats[0].id
+      }
+    }
     case SELECT_CHAT_WITH: {
       // console.log(state)
       return {
-        withChats: state.withChats,
-        currentWith: action.chatWith
+        chats: state.chats,
+        currentWith: action.currentWith
       }
     }
     case SOCKET_MESSAGES: {
@@ -44,49 +32,50 @@ const chatReducer = (state = {
       const _currentWith = {...state.currentWith}
       if (_currentWith.id === from) {
         _currentWith.chatMsg = [..._currentWith.chatMsg, { msg: msg.data, type: 1, time: Date.now() }];
-        const index = state.withChats.findIndex(item => {
+        const index = state.chats.findIndex(item => {
           return item.id === _currentWith.id
         });
-        const _withChats = [
-          ...state.withChats.slice(0, index),
+        const _chats = [
+          ...state.chats.slice(0, index),
           _currentWith,
-          ...state.withChats.slice(index + 1),
+          ...state.chats.slice(index + 1),
         ]
         return {
-          withChats: _withChats,
+          chats: _chats,
           currentWith: _currentWith,
         }
       }
-      const index = state.withChats.findIndex(item => {
+      const index = state.chats.findIndex(item => {
         return item.id === from
       });
-      let chatWith = {...state.withChats[index]};
+      let chatWith = {...state.chats[index]};
       chatWith.chatMsg = [...chatWith.chatMsg, { msg: msg.data, type: 1, time: Date.now() }];
-      const _withChats = [
-        ...state.withChats.slice(0, index),
+      const _chats = [
+        ...state.chats.slice(0, index),
         chatWith,
-        ...state.withChats.slice(index + 1),
+        ...state.chats.slice(index + 1),
       ]
       return {
-        withChats: _withChats,
+        chats: _chats,
         currentWith: _currentWith,
       }
     }
     case SEND_MESSAGE: {
       console.log(action.data);
-      const _currentWith = {...state.currentWith}
-      _currentWith.chatMsg = [..._currentWith.chatMsg, {...action.data, type: 0 }];
-      const index = state.withChats.findIndex(item => {
-        return item.id === _currentWith.id
+      const index = state.chats.findIndex(item => {
+        return item.id === state.currentWith
       });
-      const _withChats = [
-        ...state.withChats.slice(0, index),
+      const _currentWith = {...state.chats[index]}
+      _currentWith.chatMsg = [..._currentWith.chatMsg ,{...action.data, type: 0 }];
+      
+      const _chats = [
+        ...state.chats.slice(0, index),
         _currentWith,
-        ...state.withChats.slice(index + 1),
+        ...state.chats.slice(index + 1),
       ]
       return {
-        withChats: _withChats,
-        currentWith: _currentWith,
+        chats: _chats,
+        currentWith: state.currentWith,
       }
     }
     default:

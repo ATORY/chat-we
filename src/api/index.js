@@ -27,6 +27,17 @@ const loginASVisitor = () => fetch('/api/users/loginasvisitor', {
   return res.text();
 }).catch(networkErrhandler);
 
+const usersChat = () => fetch('/api/users/chats', {
+  headers: {
+    authorization: localStorage.getItem('token') || ''
+  },
+  // method: 'POST',
+  // credentials: 'same-origin',
+}).then((res) => {
+  if (res.status === 200) return res.json();
+  return res.text();
+}).catch(networkErrhandler);
+
 const fetchData = () => fetch('/api/data', {
   credentials: 'same-origin',
 });
@@ -35,7 +46,8 @@ const fetchData = () => fetch('/api/data', {
 export default {
   initAuth,
   fetchData,
-  loginASVisitor
+  loginASVisitor,
+  usersChat
   // ...users,
   // ...dashboard,
   // ...analyze,

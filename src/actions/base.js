@@ -1,6 +1,6 @@
 import { push } from 'connected-react-router';
 
-import { SELECT_CHAT_WITH, USER_LOGIN, VISITOR_LOGIN, JUST_LOOK } from 'constant'
+import { SELECT_CHAT_WITH, USER_LOGIN, VISITOR_LOGIN, JUST_LOOK, INIT_CHAT_WITH } from 'constant'
 
 import api from 'api'
 
@@ -18,7 +18,7 @@ export const loginASVisitor = () => async (dispatch, getState) => {
   const visitor = await api.loginASVisitor()
   // console.log({ visitor })
   const { token } = visitor;
-  if (token) localStorage.setItem('token', token)
+  localStorage.setItem('token', token)
   dispatch({
     type: VISITOR_LOGIN,
     visitor

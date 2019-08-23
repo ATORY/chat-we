@@ -1,11 +1,11 @@
 import { SELECT_CHAT_WITH, SEND_MESSAGE } from 'constant'
 
-export const selectChat = chatWith => (dispatch, getState) => {
+export const selectChat = currentWith => (dispatch, getState) => {
   // console.log(chatWith)
   // if (getState().products.byId[productId].inventory > 0) {
   dispatch({
     type: SELECT_CHAT_WITH,
-    chatWith
+    currentWith
   })
   // }
 }
@@ -13,7 +13,7 @@ export const selectChat = chatWith => (dispatch, getState) => {
 export const sendMessage = (socket, to, msg) => (dispatch, getState) => {
   const time = Date.now();
   socket.emit("message", {
-    from: localStorage.getItem("phone"),
+    // from: localStorage.getItem("token"),
     to,
     data: { msg, time }
   });

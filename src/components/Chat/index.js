@@ -54,17 +54,17 @@ const ASide = styled.aside`
 
 function Index({ match, chat, selectChat }) {
   // console.log(match, chat);
-  const { withChats, currentWith } = chat;
+  const { chats, currentWith } = chat;
   return (
     <Main>
       <ASide>
         <ul>
-          {withChats.map((chatWith) => {
+          {chats.map((chatItem) => {
             return (
-              <li key={chatWith.id} className={currentWith.id === chatWith.id ? 'active' : ''} onClick={() => {
-                selectChat(chatWith)
+              <li key={chatItem.id} className={currentWith === chatItem.id ? 'active' : ''} onClick={() => {
+                selectChat(chatItem.id)
               }}>
-                <div>{chatWith.name}</div>
+                <div>{chatItem.name}</div>
               </li>
             )
           })}
@@ -74,8 +74,7 @@ function Index({ match, chat, selectChat }) {
           <span>创建话题</span>
         </div>
       </ASide>
-      <Messager chatWith={currentWith} />
-      {/* <Route path={`${match.path}/:id`} component={Messager} /> */}
+      <Messager />
     </Main>
   );
 }

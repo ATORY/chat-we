@@ -15,6 +15,7 @@ const Main = styled.main`
   }
   & .record {
     flex-grow: 1;
+    overflow: scroll;
   }
   & .input {
     border-top: 1px solid darkgray;
@@ -42,16 +43,16 @@ const Main = styled.main`
   }
 `;
 
-function Messager({ socket, chat, sendMessage }) {
+function Messager({ socket, currentChat, sendMessage }) {
   const textRef = React.createRef();
   const [msg, setMsg] = useState("");
 
   useEffect(() => {
     textRef.current.focus();
-  }, [chat, textRef]);
+  }, [currentChat, textRef]);
 
   function _sendMessage() {
-    sendMessage(socket, chat.id, msg)
+    sendMessage(socket, currentChat.id, msg)
     setMsg("");
   }
 
@@ -62,9 +63,9 @@ function Messager({ socket, chat, sendMessage }) {
         textRef.current.focus();
       }}
     >
-      <div className="title">{chat.id}</div>
+      <div className="title">{currentChat.id}</div>
       <div className="record">
-        {chat.chatMsg.map(item => {
+        {currentChat.chatMsg.map(item => {
             // console.log(item)
             return (
               <div
@@ -99,19 +100,30 @@ function Messager({ socket, chat, sendMessage }) {
   );
 }
 
-function Index({ chatWith, sendMessage }) {
+function Index({ chat, sendMessage }) {
+  const { chats, currentWith } = chat;
   return (
     <ChatContext.Consumer>
       {({ socket }) => {
         // console.log(socket);
-        // const chat = middle.chats.find(item => item.phone === middle.select) || { chat: [] }
-        return <Messager socket={socket} chat={chatWith} sendMessage={sendMessage} />;
+        const currentChat = chats.find(item => item.id === currentWith) || chats[0]
+        return (
+          <Messager
+            socket={socket}
+            currentChat={currentChat}
+            sendMessage={sendMessage}
+          />
+        )
       }}
     </ChatContext.Consumer>
   );
 }
 
+const mapStateToProps = state => ({
+  chat: state.chat,
+})
+
 export default connect(
-  null,
+  mapStateToProps,
   { sendMessage }
 )(Index)
