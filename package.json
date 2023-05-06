@@ -29,7 +29,7 @@
     "redux": "^4.0.4",
     "redux-starter-kit": "^0.6.3",
     "redux-thunk": "^2.3.0",
-    "socket.io": "^2.2.0",
+    "socket.io": "^2.5.0",
     "styled-components": "^4.3.2",
     "update-electron-app": "^1.4.2"
   },
